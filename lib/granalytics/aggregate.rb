@@ -107,7 +107,7 @@ module Granalytics::Aggregate
       scope = self.aggregate_scope(event)
       #STDOUT.puts "  Decrementing #{self.name} #{scope.selector}"
 
-      record = scope.find_and_modify({'$inc' => hash}, {:new => true})
+      record = scope.find_one_and_update({'$inc' => hash}, {:new => true})
 
       # Then, remove if values empty (this is the opposite of the 'upsert' => 'true' in the #incr method)
       unset_keys = {}
