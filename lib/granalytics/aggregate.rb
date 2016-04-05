@@ -68,7 +68,7 @@ module Granalytics::Aggregate
 
     def incr(event)
       decorated_event = decorate_event(event)
-      self.aggregate_scope(event).find_and_modify({'$inc' => upsert_hash(decorated_event)}, {'upsert' => 'true', :new => true})
+      self.aggregate_scope(event).find_one_and_update({'$inc' => upsert_hash(decorated_event)}, {'upsert' => 'true', :new => true})
     end
 
     def aggregate_scope(event)
