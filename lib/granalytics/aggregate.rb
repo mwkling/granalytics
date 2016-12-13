@@ -68,7 +68,7 @@ module Granalytics::Aggregate
 
     def incr(event)
       decorated_event = decorate_event(event)
-      self.aggregate_scope(event).find_one_and_update({'$inc' => upsert_hash(decorated_event)}, {'upsert' => 'true', :new => true})
+      self.aggregate_scope(event).find_one_and_update({'$inc' => upsert_hash(decorated_event)}, {upsert: true, return_document: :after})
     end
 
     def aggregate_scope(event)
@@ -105,9 +105,7 @@ module Granalytics::Aggregate
       # First decrement
       hash = downsert_hash(event)
       scope = self.aggregate_scope(event)
-      #STDOUT.puts "  Decrementing #{self.name} #{scope.selector}"
-
-      record = scope.find_one_and_update({'$inc' => hash}, {:new => true})
+      record = scope.find_one_and_update({'$inc' => hash}, {upsert: true, return_document: :after})
 
       # Then, remove if values empty (this is the opposite of the 'upsert' => 'true' in the #incr method)
       unset_keys = {}
@@ -140,7 +138,6 @@ module Granalytics::Aggregate
         end
 
       end
-      #STDOUT.puts "  Unset keys: #{unset_keys}" if unset_keys.any?
       record
     end
 
